@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora Dólar Venezuela</title>
+
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #111827;
+      --card2: #0f172a;
+      --border: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --blue: #38bdf8;
+      --yellow: #facc15;
+      --green: #86efac;
+      --red: #fca5a5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, #020617, #0f172a);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 580px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: -0.4px;
+      line-height: 1.1;
+      flex: 1;
+    }
+
+    .language-pill {
+      width: auto;
+      min-width: 82px;
+      padding: 8px 10px;
+      font-size: 13px;
+      border-radius: 999px;
+      background: #1e293b;
+      color: #e5e7eb;
+      border: 1px solid #334155;
+      font-weight: 800;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 12px 32px rgba(0,0,0,.28);
+    }
+
+    label {
+      display: block;
+      color: #cbd5e1;
+      font-size: 13px;
+      margin-bottom: 7px;
+      font-weight: 700;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid #334155;
+      background: var(--card2);
+      color: #f8fafc;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 18px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, .12);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 23px; }
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 15px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #082f49;
+      background: var(--blue);
+      margin-top: 12px;
+    }
+
+    button.secondary {
+      background: #1e293b;
+      color: #e5e7eb;
+      border: 1px solid #334155;
+    }
+
+    button:active { transform: scale(.99); }
+
+    .status {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .ok { color: var(--green); }
+    .danger { color: var(--red); }
+
+    .result-main {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--yellow);
+      margin: 8px 0;
+      line-height: 1.2;
+    }
+
+    .result-line {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .big-number {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--yellow);
+      margin: 4px 0 10px;
+      word-break: break-word;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #1e293b;
+      color: #cbd5e1;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .pill.good {
+      background: rgba(34, 197, 94, .15);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, .25);
+    }
+
+    .pill.bad {
+      background: rgba(239, 68, 68, .15);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, .25);
+    }
+
+    .mini {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    .debug {
+      display: none;
+      white-space: pre-wrap;
+      background: #020617;
+      border: 1px solid #334155;
+      padding: 10px;
+      border-radius: 12px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #cbd5e1;
+      max-height: 220px;
+      overflow: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <h1 data-i18n="title">Calculadora Dólar Venezuela</h1>
+
+      <select id="language" class="language-pill" aria-label="Language">
+        <option value="es" selected>🇻🇪 ES</option>
+        <option value="pt">🇧🇷 PT</option>
+        <option value="en">🇺🇸 EN</option>
+      </select>
+    </header>
+
+    <div class="sub" data-i18n="subtitle">
+      Compara precio por Zelle/USD directo contra precio en dólar referencia pagado en bolívares.
+    </div>
+
+    <div class="card">
+      <label for="precoUsd" data-i18n="priceRefUsd">Precio en dólar referencia / USD ref</label>
+      <input id="precoUsd" type="number" step="0.01" inputmode="decimal" placeholder="Ej: 100">
+
+      <div style="margin-top: 12px;">
+        <label for="precoZelleUsd" data-i18n="priceZelleUsd">Precio por Zelle / USD directo</label>
+        <input id="precoZelleUsd" type="number" step="0.01" inputmode="decimal" placeholder="Ej: 100">
+      </div>
+
+      <div class="grid" style="margin-top: 12px;">
+        <div>
+          <label for="taxaLoja" data-i18n="storeRate">Tasa usada por la tienda</label>
+          <input id="taxaLoja" type="number" step="0.01" inputmode="decimal" value="">
+        </div>
+
+        <div>
+          <label for="minhaTaxa" data-i18n="myRate">Mi tasa real de cambio</label>
+          <input id="minhaTaxa" type="number" step="0.01" inputmode="decimal" value="">
+        </div>
+      </div>
+
+      <button onclick="carregarTaxas()" data-i18n="updateApi">
+        Actualizar BCV/paralelo por API
+      </button>
+
+      <button class="secondary" onclick="usarBCVNaLoja()" data-i18n="useBcv">
+        Usar BCV como tasa de la tienda
+      </button>
+
+      <button class="secondary" onclick="usarParaleloNaMinhaTaxa()" data-i18n="useParallel">
+        Usar paralelo como mi tasa
+      </button>
+
+      <div id="status" class="status" data-i18n="initialStatus">
+        Ingresa los precios y tasas para comparar.
+      </div>
+
+      <pre id="debug" class="debug"></pre>
+    </div>
+
+    <div class="card">
+      <div class="result-line" data-i18n="storeCharges">
+        Precio ref convertido a bolívares por la tienda:
+      </div>
+      <div id="precoVes" class="big-number">—</div>
+
+      <hr>
+
+      <div class="result-line" data-i18n="ifExchange">
+        Costo real en USD si cambias dólares y pagas en bolívares:
+      </div>
+      <div id="custoRealUsd" class="big-number">—</div>
+
+      <div class="result-line" data-i18n="ifPayZelle">
+        Costo si pagas por Zelle / USD directo:
+      </div>
+      <div id="pagandoZelle" class="big-number">—</div>
+
+      <hr>
+
+      <div id="decisao" class="result-main"></div>
+      <div id="economia" class="pill"></div>
+    </div>
+
+    <div class="card">
+      <div class="result-line" id="ruleText"></div>
+    </div>
+
+    <div class="card mini" id="exampleText"></div>
+  </div>
+
+  <script>
+    const el = id => document.getElementById(id);
+
+    const API_OFICIAL = "https://ve.dolarapi.com/v1/dolares/oficial";
+    const API_PARALELO = "https://ve.dolarapi.com/v1/dolares/paralelo";
+
+    let ultimoBCV = null;
+    let ultimoParalelo = null;
+    let currentLang = "es";
+
+    const i18n = {
+      es: {
+        title: "Calculadora Dólar Venezuela",
+        subtitle: "Compara precio por Zelle/USD directo contra precio en dólar referencia pagado en bolívares.",
+        priceRefUsd: "Precio en dólar referencia / USD ref",
+        priceZelleUsd: "Precio por Zelle / USD directo",
+        storeRate: "Tasa usada por la tienda",
+        myRate: "Mi tasa real de cambio",
+        updateApi: "Actualizar BCV/paralelo por API",
+        useBcv: "Usar BCV como tasa de la tienda",
+        useParallel: "Usar paralelo como mi tasa",
+        initialStatus: "Cargando tasas BCV y paralelo...",
+        storeCharges: "Precio ref convertido a bolívares por la tienda:",
+        ifExchange: "Costo real en USD si cambias dólares y pagas en bolívares:",
+        ifPayZelle: "Costo si pagas por Zelle / USD directo:",
+        fillValues: "Ingresa los valores para comparar.",
+        economyLoss: "Ahorro/pérdida: —",
+        bestExchange: "Mejor: cambiar dólares a bolívares y pagar en bolívares.",
+        bestZelle: "Mejor: pagar por Zelle / USD directo.",
+        same: "Da igual. Las dos opciones dan prácticamente el mismo valor.",
+        youSave: "Ahorras",
+        exchangingCostsMore: "Pagar en bolívares saldría",
+        moreExpensive: "más caro",
+        almostZero: "Diferencia casi cero.",
+        searching: "Buscando tasas...",
+        updated: "Tasas actualizadas.",
+        bcv: "BCV",
+        parallel: "Paralelo",
+        insertedRates: "Coloqué BCV como tasa de la tienda y paralelo como tu tasa real.",
+        apiFail: "No pude obtener la API automáticamente.",
+        fillManual: "Llena manualmente la tasa de la tienda y tu tasa real de cambio.",
+        updateApiFirst: "Actualiza por API primero o completa el valor manualmente.",
+        refPlaceholder: "Ej: 100",
+        zellePlaceholder: "Ej: 95",
+        rule: "<strong>Regla:</strong><br>El precio Zelle/USD directo se compara contra el costo real de pagar en bolívares. Si el costo real en bolívares es menor que Zelle, conviene cambiar dólares y pagar en bolívares. Si es mayor, conviene Zelle/USD directo.",
+        example: "Ejemplo: tienda pide US$ 100 ref a tasa 617 Bs/USD, pero Zelle cuesta US$ 95. La tienda cobra 61.700 Bs. Si tú cambias a 800 Bs/USD, necesitas US$ 77,12. Entonces pagar en bolívares ahorra US$ 17,88 vs Zelle."
+      },
+      pt: {
+        title: "Calculadora Dólar Venezuela",
+        subtitle: "Compare preço por Zelle/USD direto contra preço em dólar referência pago em bolívares.",
+        priceRefUsd: "Preço em dólar referência / USD ref",
+        priceZelleUsd: "Preço por Zelle / USD direto",
+        storeRate: "Taxa usada pela loja",
+        myRate: "Minha taxa real de troca",
+        updateApi: "Atualizar BCV/paralelo pela API",
+        useBcv: "Usar BCV como taxa da loja",
+        useParallel: "Usar paralelo como minha taxa",
+        initialStatus: "Carregando taxas BCV e paralelo...",
+        storeCharges: "Preço ref convertido para bolívares pela loja:",
+        ifExchange: "Custo real em USD se trocar dólares e pagar em bolívares:",
+        ifPayZelle: "Custo se pagar por Zelle / USD direto:",
+        fillValues: "Preencha os valores para comparar.",
+        economyLoss: "Economia/perda: —",
+        bestExchange: "Melhor: trocar dólares para bolívares e pagar em bolívares.",
+        bestZelle: "Melhor: pagar por Zelle / USD direto.",
+        same: "Tanto faz. Os dois dão praticamente o mesmo valor.",
+        youSave: "Você economiza",
+        exchangingCostsMore: "Pagar em bolívares sairia",
+        moreExpensive: "mais caro",
+        almostZero: "Diferença quase zero.",
+        searching: "Buscando taxas...",
+        updated: "Taxas atualizadas.",
+        bcv: "BCV",
+        parallel: "Paralelo",
+        insertedRates: "Coloquei BCV como taxa da loja e paralelo como sua taxa real.",
+        apiFail: "Não consegui puxar a API automaticamente.",
+        fillManual: "Preencha manualmente a taxa da loja e sua taxa real de troca.",
+        updateApiFirst: "Atualize pela API primeiro ou preencha o valor manualmente.",
+        refPlaceholder: "Ex: 100",
+        zellePlaceholder: "Ex: 95",
+        rule: "<strong>Regra:</strong><br>O preço Zelle/USD direto é comparado com o custo real de pagar em bolívares. Se o custo real em bolívares for menor que o Zelle, vale trocar dólares e pagar em bolívares. Se for maior, vale Zelle/USD direto.",
+        example: "Exemplo: loja pede US$ 100 ref na taxa 617 Bs/USD, mas Zelle custa US$ 95. A loja cobra 61.700 Bs. Se você troca a 800 Bs/USD, precisa de US$ 77,12. Então pagar em bolívares economiza US$ 17,88 vs Zelle."
+      },
+      en: {
+        title: "Venezuela Dollar Calculator",
+        subtitle: "Compare Zelle/direct USD price against USD reference price paid in bolivars.",
+        priceRefUsd: "USD reference price",
+        priceZelleUsd: "Zelle / direct USD price",
+        storeRate: "Rate used by the store",
+        myRate: "My real exchange rate",
+        updateApi: "Update BCV/parallel via API",
+        useBcv: "Use BCV as store rate",
+        useParallel: "Use parallel as my rate",
+        initialStatus: "Loading BCV and parallel rates...",
+        storeCharges: "Reference price converted to bolivars by the store:",
+        ifExchange: "Real USD cost if you exchange dollars and pay in bolivars:",
+        ifPayZelle: "Cost if you pay via Zelle / direct USD:",
+        fillValues: "Enter the values to compare.",
+        economyLoss: "Savings/loss: —",
+        bestExchange: "Best: exchange dollars into bolivars and pay in bolivars.",
+        bestZelle: "Best: pay via Zelle / direct USD.",
+        same: "Either option is basically the same.",
+        youSave: "You save",
+        exchangingCostsMore: "Paying in bolivars would cost",
+        moreExpensive: "more",
+        almostZero: "Almost no difference.",
+        searching: "Fetching rates...",
+        updated: "Rates updated.",
+        bcv: "BCV",
+        parallel: "Parallel",
+        insertedRates: "Set BCV as the store rate and parallel as your real rate.",
+        apiFail: "Could not fetch the API automatically.",
+        fillManual: "Fill in the store rate and your real exchange rate manually.",
+        updateApiFirst: "Update via API first or fill in the value manually.",
+        refPlaceholder: "Ex: 100",
+        zellePlaceholder: "Ex: 95",
+        rule: "<strong>Rule:</strong><br>The Zelle/direct USD price is compared against the real cost of paying in bolivars. If the bolivar route costs less than Zelle, exchange dollars and pay in bolivars. If it costs more, pay via Zelle/direct USD.",
+        example: "Example: store asks US$ 100 ref at 617 Bs/USD, but Zelle is US$ 95. The store charges 61,700 Bs. If you exchange at 800 Bs/USD, you need US$ 77.12. So paying in bolivars saves US$ 17.88 vs Zelle."
+      }
+    };
+
+    function t(key) { return i18n[currentLang][key]; }
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll("[data-i18n]").forEach(node => {
+        const key = node.getAttribute("data-i18n");
+        node.textContent = t(key);
+      });
+
+      el("precoUsd").placeholder = t("refPlaceholder");
+      el("precoZelleUsd").placeholder = t("zellePlaceholder");
+      el("ruleText").innerHTML = t("rule");
+      el("exampleText").innerHTML = t("example");
+
+      calcular();
+    }
+
+    function numero(id) {
+      return Number(String(el(id).value).replace(",", ".")) || 0;
+    }
+
+    function formatVES(n) {
+      return new Intl.NumberFormat("es-VE", {
+        style: "currency",
+        currency: "VES",
+        maximumFractionDigits: 2
+      }).format(n);
+    }
+
+    function formatUSD(n) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 2
+      }).format(n);
+    }
+
+    function escreverDebug(txt) {
+      const debug = el("debug");
+      const agora = new Date().toLocaleTimeString();
+      debug.textContent += `[${agora}] ${txt}\n`;
+    }
+
+    function extrairValor(obj) {
+      if (!obj) return null;
+
+      const possiveis = [
+        obj.promedio,
+        obj.venta,
+        obj.compra,
+        obj.valor,
+        obj.price,
+        obj.rate
+      ];
+
+      for (const v of possiveis) {
+        const n = Number(String(v).replace(",", "."));
+        if (n > 0) return n;
+      }
+
+      return null;
+    }
+
+    function calcular() {
+      const precoRefUsd = numero("precoUsd");
+      const precoZelleUsdInformado = numero("precoZelleUsd");
+      const taxaLoja = numero("taxaLoja");
+      const minhaTaxa = numero("minhaTaxa");
+
+      const precoZelleUsd = precoZelleUsdInformado || precoRefUsd;
+
+      if (!precoRefUsd || !precoZelleUsd || !taxaLoja || !minhaTaxa) {
+        el("precoVes").textContent = "—";
+        el("custoRealUsd").textContent = "—";
+        el("pagandoZelle").textContent = "—";
+        el("decisao").textContent = t("fillValues");
+        el("economia").textContent = t("economyLoss");
+        el("economia").className = "pill";
+        return;
+      }
+
+      const precoBolivares = precoRefUsd * taxaLoja;
+      const custoRealUsdBolivares = precoBolivares / minhaTaxa;
+      const economia = precoZelleUsd - custoRealUsdBolivares;
+      const percentual = (economia / precoZelleUsd) * 100;
+
+      el("precoVes").textContent = formatVES(precoBolivares);
+      el("custoRealUsd").textContent = formatUSD(custoRealUsdBolivares);
+      el("pagandoZelle").textContent = formatUSD(precoZelleUsd);
+
+      if (economia > 0.005) {
+        el("decisao").textContent = t("bestExchange");
+        el("economia").textContent = `${t("youSave")} ${formatUSD(economia)} (${percentual.toFixed(1)}%)`;
+        el("economia").className = "pill good";
+      } else if (economia < -0.005) {
+        el("decisao").textContent = t("bestZelle");
+        el("economia").textContent = `${t("exchangingCostsMore")} ${formatUSD(Math.abs(economia))} ${t("moreExpensive")} (${Math.abs(percentual).toFixed(1)}%)`;
+        el("economia").className = "pill bad";
+      } else {
+        el("decisao").textContent = t("same");
+        el("economia").textContent = t("almostZero");
+        el("economia").className = "pill";
+      }
+    }
+
+    async function fetchJsonDireto(url) {
+      escreverDebug("Trying direct: " + url);
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP direct " + res.status);
+      return await res.json();
+    }
+
+    async function fetchJsonComProxy(url) {
+      const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
+      escreverDebug("Trying proxy: " + proxy);
+      const res = await fetch(proxy, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP proxy " + res.status);
+      return await res.json();
+    }
+
+    async function fetchJson(url) {
+      try {
+        return await fetchJsonDireto(url);
+      } catch (erroDireto) {
+        escreverDebug("Direct failed: " + erroDireto.message);
+        return await fetchJsonComProxy(url);
+      }
+    }
+
+    async function carregarTaxas() {
+      const status = el("status");
+      status.textContent = t("searching");
+      el("debug").textContent = "";
+
+      try {
+        const [oficial, paralelo] = await Promise.all([
+          fetchJson(API_OFICIAL),
+          fetchJson(API_PARALELO)
+        ]);
+
+        const valorOficial = extrairValor(oficial);
+        const valorParalelo = extrairValor(paralelo);
+
+        if (!valorOficial || !valorParalelo) {
+          throw new Error("Could not identify API values.");
+        }
+
+        ultimoBCV = valorOficial;
+        ultimoParalelo = valorParalelo;
+
+        el("taxaLoja").value = valorOficial.toFixed(2);
+        el("minhaTaxa").value = valorParalelo.toFixed(2);
+
+        status.innerHTML =
+          `<span class="ok">${t("updated")}</span><br>` +
+          `${t("bcv")}: ${valorOficial.toFixed(2)} | ${t("parallel")}: ${valorParalelo.toFixed(2)}<br>` +
+          `<span class="mini">${t("insertedRates")}</span>`;
+
+        calcular();
+
+      } catch (err) {
+        escreverDebug("FINAL ERROR: " + err.message);
+        status.innerHTML =
+          `<span class="danger">${t("apiFail")}</span><br>` +
+          `${t("fillManual")}`;
+      }
+    }
+
+    function usarBCVNaLoja() {
+      if (ultimoBCV) {
+        el("taxaLoja").value = ultimoBCV.toFixed(2);
+        calcular();
+      } else {
+        el("status").innerHTML = `<span class="danger">${t("updateApiFirst")}</span>`;
+      }
+    }
+
+    function usarParaleloNaMinhaTaxa() {
+      if (ultimoParalelo) {
+        el("minhaTaxa").value = ultimoParalelo.toFixed(2);
+        calcular();
+      } else {
+        el("status").innerHTML = `<span class="danger">${t("updateApiFirst")}</span>`;
+      }
+    }
+
+    ["precoUsd", "precoZelleUsd", "taxaLoja", "minhaTaxa"].forEach(id => {
+      el(id).addEventListener("input", calcular);
+      el(id).addEventListener("change", calcular);
+    });
+
+    el("language").addEventListener("change", e => {
+      applyLanguage(e.target.value);
+    });
+
+    applyLanguage("es");
+    carregarTaxas();
+  </script>
+</body>
+</html>

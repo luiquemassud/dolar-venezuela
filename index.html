@@ -7,47 +7,64 @@
 
   <style>
     :root {
-      --bg: #020617;
-      --card: #111827;
-      --card2: #0f172a;
-      --border: #1f2937;
-      --text: #e5e7eb;
-      --muted: #94a3b8;
-      --blue: #38bdf8;
-      --yellow: #facc15;
+      --bg: #071014;
+      --card: #101820;
+      --card2: #0b1218;
+      --panel: #13212b;
+      --border: #263544;
+      --border-strong: #385064;
+      --text: #f3f7fa;
+      --muted: #a2b2c3;
+      --blue: #54c8e8;
+      --blue-strong: #1598b8;
+      --yellow: #f5c85b;
       --green: #86efac;
       --red: #fca5a5;
+      --shadow: 0 14px 34px rgba(0, 0, 0, .26);
     }
 
     * { box-sizing: border-box; }
 
+    html {
+      min-height: 100%;
+      background: #071014;
+    }
+
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: linear-gradient(180deg, #020617, #0f172a);
+      background: linear-gradient(155deg, #071014 0%, #0a1b20 45%, #111827 100%);
       color: var(--text);
     }
 
     .wrap {
-      max-width: 580px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 22px;
+      padding: 28px 18px 34px;
     }
 
     .topbar {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 6px;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand { min-width: 0; }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
     h1 {
       margin: 0;
-      font-size: 26px;
-      letter-spacing: -0.4px;
+      font-size: 30px;
+      letter-spacing: 0;
       line-height: 1.1;
-      flex: 1;
     }
 
     .language-pill {
@@ -56,26 +73,34 @@
       padding: 8px 10px;
       font-size: 13px;
       border-radius: 999px;
-      background: #1e293b;
-      color: #e5e7eb;
-      border: 1px solid #334155;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border-strong);
       font-weight: 800;
+      flex: 0 0 auto;
     }
 
     .sub {
       color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 18px;
+      font-size: 15px;
+      margin: 8px 0 0;
       line-height: 1.4;
+      max-width: 56ch;
     }
 
     .card {
-      background: rgba(17, 24, 39, 0.95);
+      background: rgba(16, 24, 32, 0.94);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 900;
       margin-bottom: 14px;
-      box-shadow: 0 12px 32px rgba(0,0,0,.28);
     }
 
     label {
@@ -86,18 +111,19 @@
       font-weight: 700;
     }
 
-    input, select {
+    input[type="number"], select {
       width: 100%;
-      border: 1px solid #334155;
+      min-height: 50px;
+      border: 1px solid var(--border-strong);
       background: var(--card2);
       color: #f8fafc;
-      border-radius: 14px;
+      border-radius: 8px;
       padding: 14px;
       font-size: 18px;
       outline: none;
     }
 
-    input:focus, select:focus {
+    input[type="number"]:focus, select:focus {
       border-color: var(--blue);
       box-shadow: 0 0 0 3px rgba(56, 189, 248, .12);
     }
@@ -108,47 +134,179 @@
       gap: 12px;
     }
 
-    @media (max-width: 480px) {
-      .grid { grid-template-columns: 1fr; }
-      h1 { font-size: 23px; }
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px;
+      min-height: 50px;
+      padding: 4px;
+      background: var(--card2);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+    }
+
+    .segmented label {
+      margin: 0;
+      min-width: 0;
+    }
+
+    .segmented input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .segmented span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, color .15s ease;
+    }
+
+    .segmented input:checked + span {
+      background: rgba(84, 200, 232, .14);
+      border-color: rgba(84, 200, 232, .42);
+      color: var(--text);
+    }
+
+    .segmented input:focus-visible + span {
+      box-shadow: 0 0 0 3px rgba(84, 200, 232, .18);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .actions .primary {
+      grid-column: auto;
     }
 
     button {
       width: 100%;
-      border: 0;
-      border-radius: 15px;
-      padding: 14px;
-      font-size: 16px;
+      min-height: 46px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 14px;
       font-weight: 800;
       cursor: pointer;
       color: #082f49;
       background: var(--blue);
-      margin-top: 12px;
     }
 
     button.secondary {
-      background: #1e293b;
+      background: var(--panel);
       color: #e5e7eb;
-      border: 1px solid #334155;
+      border-color: var(--border-strong);
+    }
+
+    button:focus-visible {
+      outline: 3px solid rgba(84, 200, 232, .32);
+      outline-offset: 2px;
     }
 
     button:active { transform: scale(.99); }
 
-    .status {
-      margin-top: 10px;
+    .status-panel {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(11, 18, 24, .72);
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .ok { color: var(--green); }
     .danger { color: var(--red); }
 
+    .status-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .status-title {
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .status-meta {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .rates-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .rate-item {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(19, 33, 43, .82);
+    }
+
+    .rate-name {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      margin-bottom: 4px;
+    }
+
+    .rate-value {
+      display: block;
+      color: var(--text);
+      font-size: 19px;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    .rate-date {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 5px;
+      line-height: 1.25;
+    }
+
+    .result-card {
+      border-color: rgba(245, 200, 91, .22);
+    }
+
+    .decision-box {
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
     .result-main {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 900;
       color: var(--yellow);
-      margin: 8px 0;
+      margin: 5px 0 8px;
       line-height: 1.2;
     }
 
@@ -159,21 +317,35 @@
     }
 
     .big-number {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 900;
       color: var(--yellow);
       margin: 4px 0 10px;
       word-break: break-word;
     }
 
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(11, 18, 24, .48);
+    }
+
     .pill {
       display: inline-block;
-      padding: 7px 11px;
+      padding: 8px 11px;
       border-radius: 999px;
-      background: #1e293b;
+      background: var(--panel);
       color: #cbd5e1;
       font-size: 13px;
-      margin-top: 8px;
+      font-weight: 800;
     }
 
     .pill.good {
@@ -191,13 +363,7 @@
     .mini {
       font-size: 12px;
       color: var(--muted);
-      line-height: 1.45;
-    }
-
-    hr {
-      border: 0;
-      border-top: 1px solid var(--border);
-      margin: 16px 0;
+      line-height: 1.4;
     }
 
     .debug {
@@ -213,13 +379,43 @@
       max-height: 220px;
       overflow: auto;
     }
+
+    @media (min-width: 640px) {
+      .metrics-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .wrap { padding: 20px 14px 28px; }
+      .topbar {
+        align-items: flex-start;
+        gap: 12px;
+      }
+      h1 { font-size: 24px; }
+      .grid,
+      .actions,
+      .rates-grid {
+        grid-template-columns: 1fr;
+      }
+      .status-head {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .status-meta { text-align: left; }
+      .big-number { font-size: 25px; }
+      .result-main { font-size: 21px; }
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <header class="topbar">
-      <h1 data-i18n="title">Calculadora Dólar/Euro Venezuela</h1>
+      <div class="brand">
+        <h1 data-i18n="title">Calculadora Dólar/Euro Venezuela</h1>
+        <div class="sub" data-i18n="subtitle">
+          Compara precio por Zelle/USD directo contra precio en dólar o euro referencia pagado en bolívares.
+        </div>
+      </div>
 
       <select id="language" class="language-pill" aria-label="Language">
         <option value="es" selected>🇻🇪 ES</option>
@@ -228,11 +424,10 @@
       </select>
     </header>
 
-    <div class="sub" data-i18n="subtitle">
-      Compara precio por Zelle/USD directo contra precio en dólar o euro referencia pagado en bolívares.
-    </div>
+    <main class="stack">
+    <div class="card input-card">
+      <div class="card-title" data-i18n="inputsTitle">Datos de la compra</div>
 
-    <div class="card">
       <div class="grid">
         <div>
           <label id="priceRefLabel" for="precoUsd">Precio de referencia</label>
@@ -240,11 +435,17 @@
         </div>
 
         <div>
-          <label for="moedaRef" data-i18n="referenceCurrency">Moneda de referencia</label>
-          <select id="moedaRef">
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-          </select>
+          <label data-i18n="referenceCurrency">Moneda de referencia</label>
+          <div class="segmented" role="radiogroup" aria-label="Moneda de referencia">
+            <label>
+              <input type="radio" name="moedaRef" value="USD" checked>
+              <span>USD</span>
+            </label>
+            <label>
+              <input type="radio" name="moedaRef" value="EUR">
+              <span>EUR</span>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -265,47 +466,54 @@
         </div>
       </div>
 
-      <button onclick="carregarTaxas()" data-i18n="updateApi">
-        Actualizar BCV/paralelo por API
-      </button>
+      <div class="actions">
+        <button class="primary" onclick="carregarTaxas()" data-i18n="updateApi">
+          Actualizar tasas
+        </button>
 
-      <button class="secondary" onclick="usarBCVNaLoja()" data-i18n="useBcv">
-        Usar BCV como tasa de la tienda
-      </button>
+        <button class="secondary" onclick="usarBCVNaLoja()" data-i18n="useBcv">
+          Aplicar oficial tienda
+        </button>
 
-      <button class="secondary" onclick="usarParaleloNaMinhaTaxa()" data-i18n="useParallel">
-        Usar paralelo como mi tasa
-      </button>
-
-      <div id="status" class="status" data-i18n="initialStatus">
-        Ingresa los precios y tasas para comparar.
+        <button class="secondary" onclick="usarParaleloNaMinhaTaxa()" data-i18n="useParallel">
+          Aplicar paralelo USD
+        </button>
       </div>
+
+      <div id="status" class="status-panel"></div>
 
       <pre id="debug" class="debug"></pre>
     </div>
 
-    <div class="card">
-      <div class="result-line" data-i18n="storeCharges">
-        Precio ref convertido a bolívares por la tienda:
+    <div class="card result-card">
+      <div class="decision-box">
+        <div class="result-line" data-i18n="bestOption">Mejor opción</div>
+        <div id="decisao" class="result-main"></div>
+        <div id="economia" class="pill"></div>
       </div>
-      <div id="precoVes" class="big-number">—</div>
 
-      <hr>
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="result-line" data-i18n="storeCharges">
+            Precio ref convertido a bolívares por la tienda:
+          </div>
+          <div id="precoVes" class="big-number">—</div>
+        </div>
 
-      <div class="result-line" data-i18n="ifExchange">
-        Costo real en USD si cambias dólares y pagas en bolívares:
+        <div class="metric">
+          <div class="result-line" data-i18n="ifExchange">
+            Costo real en USD si cambias dólares y pagas en bolívares:
+          </div>
+          <div id="custoRealUsd" class="big-number">—</div>
+        </div>
+
+        <div class="metric">
+          <div class="result-line" data-i18n="ifPayZelle">
+            Costo si pagas por Zelle / USD directo:
+          </div>
+          <div id="pagandoZelle" class="big-number">—</div>
+        </div>
       </div>
-      <div id="custoRealUsd" class="big-number">—</div>
-
-      <div class="result-line" data-i18n="ifPayZelle">
-        Costo si pagas por Zelle / USD directo:
-      </div>
-      <div id="pagandoZelle" class="big-number">—</div>
-
-      <hr>
-
-      <div id="decisao" class="result-main"></div>
-      <div id="economia" class="pill"></div>
     </div>
 
     <div class="card">
@@ -313,6 +521,7 @@
     </div>
 
     <div class="card mini" id="exampleText"></div>
+    </main>
   </div>
 
   <script>
@@ -329,29 +538,32 @@
     };
 
     const taxas = {
-      USD: { oficial: null, paralelo: null },
-      EUR: { oficial: null }
+      USD: { oficial: null, oficialFecha: null, paralelo: null, paraleloFecha: null },
+      EUR: { oficial: null, oficialFecha: null }
     };
 
     let currentLang = "es";
+    let statusMode = "initial";
 
     const i18n = {
       es: {
         title: "Calculadora Dólar/Euro Venezuela",
         subtitle: "Compara precio por Zelle/USD directo contra precio en dólar o euro referencia pagado en bolívares.",
+        inputsTitle: "Datos de la compra",
         priceRef: "Precio de referencia",
         referenceCurrency: "Moneda de referencia",
         priceZelleUsd: "Precio por Zelle / USD directo",
         storeRate: "Tasa usada por la tienda",
         vesPer: "VES por",
         myRate: "Mi tasa real USD",
-        updateApi: "Actualizar tasas por API",
-        useBcv: "Usar oficial como tasa de la tienda",
-        useParallel: "Usar paralelo USD como mi tasa",
+        updateApi: "Actualizar tasas",
+        useBcv: "Aplicar oficial tienda",
+        useParallel: "Aplicar paralelo USD",
         initialStatus: "Cargando tasas...",
         storeCharges: "Precio ref convertido a bolívares por la tienda:",
         ifExchange: "Costo real en USD si cambias dólares y pagas en bolívares:",
         ifPayZelle: "Costo si pagas por Zelle / USD directo:",
+        bestOption: "Mejor opción",
         fillValues: "Ingresa los valores para comparar.",
         economyLoss: "Ahorro/pérdida: —",
         bestExchange: "Mejor: cambiar dólares a bolívares y pagar en bolívares.",
@@ -363,9 +575,12 @@
         almostZero: "Diferencia casi cero.",
         searching: "Buscando tasas...",
         updated: "Tasas actualizadas.",
+        referenceDates: "Fechas de referencia",
+        referenceDate: "Fecha",
+        noReferenceDate: "Sin fecha",
+        venezuelaTime: "Hora Venezuela",
         bcv: "BCV",
         parallel: "Paralelo",
-        insertedRates: "Coloqué la tasa oficial de la moneda de referencia como tasa de la tienda y paralelo USD como tu tasa real.",
         apiFail: "No pude obtener la API automáticamente.",
         fillManual: "Llena manualmente la tasa de la tienda y tu tasa real de cambio.",
         updateApiFirst: "Actualiza por API primero o completa el valor manualmente.",
@@ -377,19 +592,21 @@
       pt: {
         title: "Calculadora Dólar/Euro Venezuela",
         subtitle: "Compare preço por Zelle/USD direto contra preço em dólar ou euro referência pago em bolívares.",
+        inputsTitle: "Dados da compra",
         priceRef: "Preço de referência",
         referenceCurrency: "Moeda de referência",
         priceZelleUsd: "Preço por Zelle / USD direto",
         storeRate: "Taxa usada pela loja",
         vesPer: "VES por",
         myRate: "Minha taxa real USD",
-        updateApi: "Atualizar taxas pela API",
-        useBcv: "Usar oficial como taxa da loja",
-        useParallel: "Usar paralelo USD como minha taxa",
+        updateApi: "Atualizar taxas",
+        useBcv: "Aplicar oficial loja",
+        useParallel: "Aplicar paralelo USD",
         initialStatus: "Carregando taxas...",
         storeCharges: "Preço ref convertido para bolívares pela loja:",
         ifExchange: "Custo real em USD se trocar dólares e pagar em bolívares:",
         ifPayZelle: "Custo se pagar por Zelle / USD direto:",
+        bestOption: "Melhor opção",
         fillValues: "Preencha os valores para comparar.",
         economyLoss: "Economia/perda: —",
         bestExchange: "Melhor: trocar dólares para bolívares e pagar em bolívares.",
@@ -401,9 +618,12 @@
         almostZero: "Diferença quase zero.",
         searching: "Buscando taxas...",
         updated: "Taxas atualizadas.",
+        referenceDates: "Datas de referência",
+        referenceDate: "Data",
+        noReferenceDate: "Sem data",
+        venezuelaTime: "Hora da Venezuela",
         bcv: "BCV",
         parallel: "Paralelo",
-        insertedRates: "Coloquei a taxa oficial da moeda de referência como taxa da loja e paralelo USD como sua taxa real.",
         apiFail: "Não consegui puxar a API automaticamente.",
         fillManual: "Preencha manualmente a taxa da loja e sua taxa real de troca.",
         updateApiFirst: "Atualize pela API primeiro ou preencha o valor manualmente.",
@@ -415,19 +635,21 @@
       en: {
         title: "Venezuela Dollar/Euro Calculator",
         subtitle: "Compare Zelle/direct USD price against USD or EUR reference price paid in bolivars.",
+        inputsTitle: "Purchase details",
         priceRef: "Reference price",
         referenceCurrency: "Reference currency",
         priceZelleUsd: "Zelle / direct USD price",
         storeRate: "Rate used by the store",
         vesPer: "VES per",
         myRate: "My real USD rate",
-        updateApi: "Update rates via API",
-        useBcv: "Use official as store rate",
-        useParallel: "Use USD parallel as my rate",
+        updateApi: "Update rates",
+        useBcv: "Apply official store",
+        useParallel: "Apply USD parallel",
         initialStatus: "Loading rates...",
         storeCharges: "Reference price converted to bolivars by the store:",
         ifExchange: "Real USD cost if you exchange dollars and pay in bolivars:",
         ifPayZelle: "Cost if you pay via Zelle / direct USD:",
+        bestOption: "Best option",
         fillValues: "Enter the values to compare.",
         economyLoss: "Savings/loss: —",
         bestExchange: "Best: exchange dollars into bolivars and pay in bolivars.",
@@ -439,9 +661,12 @@
         almostZero: "Almost no difference.",
         searching: "Fetching rates...",
         updated: "Rates updated.",
+        referenceDates: "Reference dates",
+        referenceDate: "Date",
+        noReferenceDate: "No date",
+        venezuelaTime: "Venezuela time",
         bcv: "BCV",
         parallel: "Parallel",
-        insertedRates: "Set the official rate for the reference currency as the store rate and USD parallel as your real rate.",
         apiFail: "Could not fetch the API automatically.",
         fillManual: "Fill in the store rate and your real exchange rate manually.",
         updateApiFirst: "Update via API first or fill in the value manually.",
@@ -454,8 +679,23 @@
 
     function t(key) { return i18n[currentLang][key]; }
 
+    function localeAtual() {
+      const locales = { es: "es-VE", pt: "pt-BR", en: "en-US" };
+      return locales[currentLang] || "es-VE";
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function moedaReferencia() {
-      return el("moedaRef").value || "USD";
+      const checked = document.querySelector('input[name="moedaRef"]:checked');
+      return checked?.value || "USD";
     }
 
     function atualizarTextosMoeda() {
@@ -479,6 +719,7 @@
       el("exampleText").innerHTML = t("example");
 
       atualizarTextosMoeda();
+      renderStatus();
       calcular();
     }
 
@@ -526,6 +767,63 @@
       }
 
       return null;
+    }
+
+    function extrairFecha(obj) {
+      return obj?.fechaActualizacion || obj?.updatedAt || obj?.date || null;
+    }
+
+    function formatDataReferencia(value) {
+      if (!value) return t("noReferenceDate");
+
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+
+      const temHoraUtil = !/T00:00:00(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/.test(value);
+      const options = temHoraUtil
+        ? { dateStyle: "medium", timeStyle: "short", timeZone: "America/Caracas" }
+        : { dateStyle: "medium", timeZone: "America/Caracas" };
+
+      return new Intl.DateTimeFormat(localeAtual(), options).format(date);
+    }
+
+    function renderRateItem(nome, valor, fecha) {
+      return `
+        <div class="rate-item">
+          <span class="rate-name">${escapeHtml(nome)}</span>
+          <span class="rate-value">${escapeHtml(formatTaxa(valor))}</span>
+          <span class="rate-date">${escapeHtml(t("referenceDate"))}: ${escapeHtml(formatDataReferencia(fecha))}</span>
+        </div>
+      `;
+    }
+
+    function renderStatus() {
+      const status = el("status");
+
+      if (statusMode === "rates" && taxas.USD.oficial && taxas.USD.paralelo && taxas.EUR.oficial) {
+        status.innerHTML = `
+          <div class="status-head">
+            <span class="status-title ok">${escapeHtml(t("updated"))}</span>
+            <span class="status-meta">${escapeHtml(t("referenceDates"))} · ${escapeHtml(t("venezuelaTime"))}</span>
+          </div>
+          <div class="rates-grid">
+            ${renderRateItem(`USD ${t("bcv")}`, taxas.USD.oficial, taxas.USD.oficialFecha)}
+            ${renderRateItem(`USD ${t("parallel")}`, taxas.USD.paralelo, taxas.USD.paraleloFecha)}
+            ${renderRateItem(`EUR ${t("bcv")}`, taxas.EUR.oficial, taxas.EUR.oficialFecha)}
+          </div>
+        `;
+        return;
+      }
+
+      if (statusMode === "error") {
+        status.innerHTML =
+          `<span class="danger">${escapeHtml(t("apiFail"))}</span><br>` +
+          `${escapeHtml(t("fillManual"))}`;
+        return;
+      }
+
+      const key = statusMode === "loading" ? "searching" : "initialStatus";
+      status.innerHTML = `<span class="status-title">${escapeHtml(t(key))}</span>`;
     }
 
     function calcular() {
@@ -616,18 +914,9 @@
       }
     }
 
-    function resumoTaxas() {
-      const linhas = [
-        `USD ${t("bcv")}: ${formatTaxa(taxas.USD.oficial)} | USD ${t("parallel")}: ${formatTaxa(taxas.USD.paralelo)}`,
-        `EUR ${t("bcv")}: ${formatTaxa(taxas.EUR.oficial)}`
-      ];
-
-      return linhas.join("<br>");
-    }
-
     async function carregarTaxas() {
-      const status = el("status");
-      status.textContent = t("searching");
+      statusMode = "loading";
+      renderStatus();
       el("debug").textContent = "";
 
       try {
@@ -647,22 +936,21 @@
 
         taxas.USD.oficial = valorUsdOficial;
         taxas.USD.paralelo = valorUsdParalelo;
+        taxas.USD.oficialFecha = extrairFecha(usdOficial);
+        taxas.USD.paraleloFecha = extrairFecha(usdParalelo);
         taxas.EUR.oficial = valorEurOficial;
+        taxas.EUR.oficialFecha = extrairFecha(eurOficial);
 
         preencherTaxasAutomaticas();
 
-        status.innerHTML =
-          `<span class="ok">${t("updated")}</span><br>` +
-          `${resumoTaxas()}<br>` +
-          `<span class="mini">${t("insertedRates")}</span>`;
-
+        statusMode = "rates";
+        renderStatus();
         calcular();
 
       } catch (err) {
         escreverDebug("FINAL ERROR: " + err.message);
-        status.innerHTML =
-          `<span class="danger">${t("apiFail")}</span><br>` +
-          `${t("fillManual")}`;
+        statusMode = "error";
+        renderStatus();
       }
     }
 
@@ -692,10 +980,12 @@
       el(id).addEventListener("change", calcular);
     });
 
-    el("moedaRef").addEventListener("change", () => {
-      atualizarTextosMoeda();
-      preencherTaxaLojaOficial();
-      calcular();
+    document.querySelectorAll('input[name="moedaRef"]').forEach(input => {
+      input.addEventListener("change", () => {
+        atualizarTextosMoeda();
+        preencherTaxaLojaOficial();
+        calcular();
+      });
     });
 
     el("language").addEventListener("change", e => {
